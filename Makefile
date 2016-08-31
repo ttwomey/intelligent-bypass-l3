@@ -69,13 +69,13 @@ sdist: clean
 tests: unittest systest
 
 unittest: clean
-	$(COVERAGE) run -m unittest discover test/unit -v
+	$(COVERAGE) run --include '*.py' -m unittest  discover test/unit -v
 
 systest: clean
 	$(COVERAGE) run -m unittest discover test/system -v
 
 coverage_report:
-	$(COVERAGE) report -m
+	$(COVERAGE) report -m --include='hbm.py,bfd_int_sync.py'
 
 all: clean swix
 
