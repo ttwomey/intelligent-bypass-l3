@@ -53,25 +53,24 @@ Installation
 
 Install the extension package::
 
-    Arista#copy http://\ <host>/intelligent-bypass.swix extensions:
-    Arista#extension intelligent-bypass.swix Arista#sh extensions Name
-    Version/Release Status extension
-    ------------------------------------------ -------------------------
-    ------ ----EosSdk-1.7.0-4.15.2F.i686.rpm 1.7.0/2692966.gaevanseoss
-    A, I 1
+    Arista#copy http://<host>/intelligent-bypass-l3-1.0-1.swix extensions:
+    Arista#extension intelligent-bypass-l3-1.0-1.swix
+    Arista##show extensions
+    Name                                       Version/Release           Status extension
+    ------------------------------------------ ------------------------- ------ ----
+    intelligent-bypass-l3-1.0-1.swix           1.0/1                     A, I      1
 
-    A: available \| NA: not available \| I: installed \| NI: not
-    installed \| F: forced
+    A: available | NA: not available | I: installed | NI: not installed | F: forced
 
     Arista#copy installed-extensions boot-extensions
 
 Configuration
 -------------
 
-The default configuration file is in /persist/sys/bfd\_int\_sync.ini
- This may be overridden with a command-line
-option: '--config </path/to/bfd\_int\_sync.ini>'. This single file
-applies to both monitoring scripts.
+The default configuration file is in /persist/sys/bfd\_int\_sync.ini This may
+be overridden with a command-line option: `--config
+</path/to/bfd\_int\_sync.ini>`. This single file applies to both monitoring
+scripts.
 
 ::
 
