@@ -64,9 +64,9 @@ Arista(config-event-handler-hbm)
 
 %install
 %{__install} -m 0644 -D bfd_int_sync.ini %{buildroot}%{_sysconfdir}/bfd_int_sync.ini
-%{__install} -m 0755 -D bfd_int_sync.py %{buildroot}%{flash}/bfd_int_sync.py
-%{__install} -m 0755 -D hbm.py %{buildroot}%{flash}/hbm.py
-%{__install} -m 0755 -D hbm_service %{buildroot}/%{flash}/hbm_service
+%{__install} -m 0755 -D bfd_int_sync.py %{buildroot}%{_bindir}/bfd_int_sync.py
+%{__install} -m 0755 -D hbm.py %{buildroot}%{_bindir}/hbm.py
+%{__install} -m 0755 -D hbm_service %{buildroot}/%{_bindir}/hbm_service
 
 %clean
 rm -rf %{buildroot}
@@ -120,10 +120,10 @@ exit 0
 %files
 %defattr(-,root,eosadmin,-)
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/bfd_int_sync.ini
-%{flash}/bfd_int_sync.py
-%{flash}/hbm.py
-%{flash}/hbm_service
-%exclude %{flash}/*.py[co]
+%{_bindir}/bfd_int_sync.py
+%{_bindir}/hbm.py
+%{_bindir}/hbm_service
+%exclude %{_bindir}/*.py[co]
 
 %changelog
 * Mon Aug 29 2016 Jere Julian<jere@arista.com> - %{version}-1
