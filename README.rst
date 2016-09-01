@@ -31,14 +31,14 @@ Install the extension package::
 
   Arista#copy installed-extensions boot-extensions
 
-Configuration
--------------
-The default configuration file is in /mnt/flash/bfd_int_sync.ini (flash:bfd_int_sync.ini) This may be overridden with a command-line option: '--config </path/to/bfd_int_sync.ini>'.   This single file applies to both monitoring scripts.
+Configuration ------------- The default configuration file is in
+/mnt/flash/bfd_int_sync.ini (flash:bfd_int_sync.ini) This may be overridden
+with a command-line option: '--config </path/to/bfd_int_sync.ini>'.   This
+single file applies to both monitoring scripts.
 
 ::
   Arista#bash cat /mnt/flash/bfd_int_sync.ini
 
-  ###############################################################################
   #
   [General]
   # Seconds to pause between probes
