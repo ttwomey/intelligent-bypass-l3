@@ -10,7 +10,7 @@ from contextlib import contextmanager
 sys.path.append(os.path.join(os.path.dirname(__file__), '../lib'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
-from hbm import Heartbeat, Status
+from hbm import Heartbeat, Status  # noqa
 
 
 @contextmanager
