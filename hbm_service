@@ -1,0 +1,93 @@
+#!/bin/bash
+#
+# This script starts and stops the Intelligent bypass processes
+#
+name=`basename $0`
+hbm="/usr/bin/hbm.py"
+bfd="/usr/bin/bfd_int_sync.py"
+config="/persist/sys/bfd_int_sync.ini "
+
+hbm_pid_file="/var/run/hbm.pid"
+bfdsync_pid_file="/var/run/bfdsync.pid"
+stdout_log="/var/log/$name.log"
+stderr_log="/var/log/$name.err"
+
+function is_running() {
+    [ -f "${1}" ] && ps `cat ${1}` > /dev/null 2>&1
+}
+
+start_hbm() {
+    if is_running ${hbm_pid_file}; then
+        echo "Already started"
+    else
+        echo "Starting Heartbeat Monitor"
+        ${hbm} --config ${config} &
+        echo $! > "$hbm_pid_file"
+    fi
+}
+
+stop_hbm() {
+    echo -n "Stopping Heartbeat Monitor.."
+    if [ -f "$hbm_pid_file" ]; then
+      kill `cat $hbm_pid_file`
+      rm -f $hbm_pid_file
+    fi
+    echo
+}
+
+start_bfd_sync() {
+    if is_running ${bfdsync_pid_file}; then
+        echo "Already started"
+    else
+        echo "Starting BFD Sync"
+        ${bfd} --config ${config} &
+        echo $! > "$bfdsync_pid_file"
+    fi
+}
+
+stop_bfd_sync() {
+    echo -n "Stopping BFD Sync.."
+    if [ -f "$bfdsync_pid_file" ]; then
+      kill `cat $bfdsync_pid_file`
+      rm -f $bfdsync_pid_file
+    fi
+    echo
+}
+
+case "$1" in
+    start)
+    if is_running; then
+        echo "Already started"
+    else
+        start_hbm
+        start_bfd_sync
+    fi
+    ;;
+    start_hbm)
+        start_hbm
+    ;;
+    start_bfdsync)
+        start_bfd_sync
+    ;;
+    stop)
+        stop_hbm
+        stop_bfd_sync
+    ;;
+    stop_hbm)
+        stop_hbm
+    ;;
+    stop_bfdsync)
+        stop_bfd_sync
+    ;;
+    status)
+        pgrep -l 'hbm|bfd_int_sync' | grep -v $name || echo " Not running"
+    ;;
+    *)
+        >&2 echo "USAGE:"
+        >&2 echo "    $name <start|status|stop|start_hbm|stop_hbm|start_bfdsync|stop_bfdsync>"
+        >&2 echo
+        exit 1
+    ;;
+esac
+
+exit 0
