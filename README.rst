@@ -52,6 +52,7 @@ Installation
 ------------
 
 Install the extension package::
+
     Arista#copy http://\ <host>/intelligent-bypass.swix extensions:
     Arista#extension intelligent-bypass.swix Arista#sh extensions Name
     Version/Release Status extension
@@ -67,14 +68,14 @@ Install the extension package::
 Configuration
 -------------
 
-The default configuration file is in /mnt/flash/bfd\_int\_sync.ini
-(flash:bfd\_int\_sync.ini) This may be overridden with a command-line
+The default configuration file is in /persist/sys/bfd\_int\_sync.ini
+ This may be overridden with a command-line
 option: '--config </path/to/bfd\_int\_sync.ini>'. This single file
 applies to both monitoring scripts.
 
 ::
 
-    Arista#bash cat /mnt/flash/bfd\_int\_sync.ini
+    Arista#bash cat /persist/sys/bfd\_int\_sync.ini
 
     ###############################################################################
     # [General]
@@ -108,7 +109,7 @@ applies to both monitoring scripts.
     protocol= http
     username = hbmuser
     password = icanttellyou
-    #url = <https://arista:arista@localhost:443/command-api>
+    #url = https://arista:arista@localhost:443/command-api
 
     starting_config = [enable,
                        configure,
@@ -132,10 +133,14 @@ applies to both monitoring scripts.
                        interface Ethernet4,
                        description HBM: Disabled]
 
-    [peer_eapi] # Configure eAPI settings for our peer switch so we
-    can configure ports there hostname = 192.0.2.1 port = 80 protocol=
-    http username = hbmuser password = icanttellyou #url =
-    <https://arista:arista@localhost:443/command-api>
+    [peer_eapi]
+    # Configure eAPI settings for our peer switch so we can configure ports there
+    hostname = 192.0.2.1
+    port = 80
+    protocol= http
+    username = hbmuser
+    password = icanttellyou
+    #url = https://arista:arista@localhost:443/command-api
 
     starting_config = [enable,
                        configure,
@@ -181,13 +186,13 @@ On-switch EOS config to ensure scripts start automatically on reload:
 ::
 
     Arista(config)#event-handler hbm
-    Arista(config-event-handler-hbm)#action bash /mnt/flash/hbm.py
+    Arista(config-event-handler-hbm)#action bash /usr/bin/hbm.py
     Arista(config-event-handler-hbm)#delay 300
     Arista(config-event-handler-hbm)#trigger on-boot
     Arista(config-event-handler-hbm)#exit
 
     Arista(config)#event-handler bfd_sync
-    Arista(config-event-handler-bfd_sync)#action bash /mnt/flash/bfd_int_sync.py
+    Arista(config-event-handler-bfd_sync)#action bash /usr/bin/bfd_int_sync.py
     Arista(config-event-handler-bfd_sync)#delay 300
     Arista(config-event-handler-bfd_sync)#trigger on-boot
     Arista(config-event-handler-bfd_sync)#end
@@ -201,14 +206,14 @@ services:
 ::
 
     Arista(config)#
-    alias hbm_status    bash /mnt/flash/hbm_service status
-    alias ips_mon       bash /mnt/flash/hbm_service
-    alias start_all     bash /mnt/flash/hbm_service start
-    alias start_bfdsync bash /mnt/flash/hbm_service start_bfdsync
-    alias start_hbm     bash /mnt/flash/hbm_service start_hbm
-    alias stop_all      bash /mnt/flash/hbm_service stop
-    alias stop_bfdsync  bash /mnt/flash/hbm_service stop_bfdsync
-    alias stop_hbm      bash /mnt/flash/hbm_service stop_hbm
+    alias hbm_status    bash /usr/bin/hbm_service status
+    alias ips_mon       bash /usr/bin/hbm_service
+    alias start_all     bash /usr/bin/hbm_service start
+    alias start_bfdsync bash /usr/bin/hbm_service start_bfdsync
+    alias start_hbm     bash /usr/bin/hbm_service start_hbm
+    alias stop_all      bash /usr/bin/hbm_service stop
+    alias stop_bfdsync  bash /usr/bin/hbm_service stop_bfdsync
+    alias stop_hbm      bash /usr/bin/hbm_service stop_hbm
 
 Verify monitor scripts are running
 ----------------------------------
@@ -241,19 +246,19 @@ Testing
 
 ::
 
-    bash /mnt/flash/hbm_service
+    bash /usr/bin/hbm_service
     USAGE:
         hbm_service <start|status|stop|start_hbm|stop_hbm|start_bfdsync|stop_bfdsync>
 
-    bash /mnt/flash/hbm.py --debug
+    bash /usr/bin/hbm.py --debug
     usage: hbm.py [-h] [--config CONFIG] [--debug] [--logfile LOGFILE]
 
 
-    bash /mnt/flash/hbm.py --config /mnt/flash/bfd_int_sync.ini --debug
+    bash /usr/bin/hbm.py --config /persist/sys/bfd_int_sync.ini --debug
 
-    bash /mnt/flash/bfd_int_sync.py --help
+    bash /usr/bin/bfd_int_sync.py --help
     usage: bfd_int_sync.py [-h] [--config CONFIG] [--debug]
                            [--interface INTERFACE] [--logfile LOGFILE]
 
-    bash /mnt/flash/bfd_int_sync.py --config /mnt/flash/bfd_int_sync.ini --debug
+    bash /usr/bin/bfd_int_sync.py --config /persist/sys/bfd_int_sync.ini --debug
 
