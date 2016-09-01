@@ -32,10 +32,10 @@ notices.
 
 Sample Syslog messages:
 ti254...15:20:05#sh log last 20 min
-Feb 11 15:20:00 ti254 Rib: %BGP-BFD-STATE-CHANGE: peer 192.0.3.1 (AS 10000) Up to Down
-Feb 11 15:20:00 ti254 Rib: %BGP-3-NOTIFICATION: sent to neighbor 192.0.3.1 (AS 10000) 6/6 (Cease/other configuration change) 0 bytes
-Feb 11 15:20:00 ti254 Rib: %BGP-5-ADJCHANGE: peer 192.0.3.1 (AS 10000) old state Established event Stop new state Idle
-Feb 11 15:20:00 ti254 Bfd: %BFD-5-STATE_CHANGE: peer 192.0.3.1 changed state from Up to Down
+Feb 11 15:20:00 ti254 Rib: %BGP-BFD-STATE-CHANGE: peer 192.0.3.1 (AS 10000) Up to Down  # noqa
+Feb 11 15:20:00 ti254 Rib: %BGP-3-NOTIFICATION: sent to neighbor 192.0.3.1 (AS 10000) 6/6 (Cease/other configuration change) 0 bytes  # noqa
+Feb 11 15:20:00 ti254 Rib: %BGP-5-ADJCHANGE: peer 192.0.3.1 (AS 10000) old state Established event Stop new state Idle  # noqa
+Feb 11 15:20:00 ti254 Bfd: %BFD-5-STATE_CHANGE: peer 192.0.3.1 changed state from Up to Down  # noqa
 
 Start this daemon with the following EOS config:
 
@@ -257,12 +257,15 @@ def parse_config(filename):
     CONFIG['username'] = config.get('eapi', 'username')
     CONFIG['password'] = config.get('eapi', 'password')
     CONFIG['url'] = config.get('eapi', 'url')
-    CONFIG['starting_config'] = conf_string_to_list(config.get('eapi',
-                                                               'starting_config'))
-    CONFIG['ok_config'] = conf_string_to_list(config.get('eapi',
-                                                         'ok_config'))
-    CONFIG['fail_config'] = conf_string_to_list(config.get('eapi',
-                                                           'fail_config'))
+    CONFIG['starting_config'] = \
+        conf_string_to_list(config.get('eapi',
+                                       'starting_config'))
+    CONFIG['ok_config'] = \
+        conf_string_to_list(config.get('eapi',
+                                       'ok_config'))
+    CONFIG['fail_config'] = \
+        conf_string_to_list(config.get('eapi',
+                                       'fail_config'))
 
     CONFIG['alert_holddown'] = config.getint('General', 'alert_holddown')
     CONFIG['interface1'] = config.get('General', 'interface1')
@@ -275,12 +278,15 @@ def parse_config(filename):
         CONFIG['peer_username'] = config.get('peer_eapi', 'username')
         CONFIG['peer_password'] = config.get('peer_eapi', 'password')
         CONFIG['peer_url'] = config.get('peer_eapi', 'url')
-        CONFIG['peer_starting_config'] = conf_string_to_list(config.get('peer_eapi',
-                                                             'starting_config'))
-        CONFIG['peer_ok_config'] = conf_string_to_list(config.get('peer_eapi',
-                                                       'ok_config'))
-        CONFIG['peer_fail_config'] = conf_string_to_list(config.get('peer_eapi',
-                                                         'fail_config'))
+        CONFIG['peer_starting_config'] = \
+            conf_string_to_list(config.get('peer_eapi',
+                                           'starting_config'))
+        CONFIG['peer_ok_config'] = \
+            conf_string_to_list(config.get('peer_eapi',
+                                           'ok_config'))
+        CONFIG['peer_fail_config'] = \
+            conf_string_to_list(config.get('peer_eapi',
+                                           'fail_config'))
 
     if DEBUG:
         print "CONFIG: {0}\n".format(pformat(CONFIG))
