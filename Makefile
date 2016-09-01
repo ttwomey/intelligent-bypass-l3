@@ -19,11 +19,10 @@
 ########################################################
 # variable section
 
-NAME = "intelligent-bypass-l3"
+NAME = intelligent-bypass-l3
 
 PYTHON=python
 COVERAGE=coverage
-SITELIB = $(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
 
 VERSION := $(shell cat VERSION)
 RPMRELEASE := 1
@@ -58,7 +57,7 @@ clean:
 	@echo "Cleaning up build/dist/rpmbuild..."
 	rm -rf $(TMPDIR)/build/$(BASENAME)
 	rm -rf build dist rpmbuild
-	rm -f manifest.txt $(SWIX) $(EOSRPM) $(PAM_EOS_RPM) $(PAM_RPM_NAME).*.src.rpm
+	rm -f manifest.txt $(SWIX) $(EOSRPM)
 	rm -rf *.egg-info
 	@echo "Cleaning up byte compiled python stuff"
 	find . -type f -regex ".*\.py[co]$$" -delete
@@ -83,19 +82,15 @@ rpm: $(EOSRPM)
 
 swix: $(SWIX)
 
-$(SWIX): $(EOSRPM) $(PAM_EOS_RPM) manifest.txt
+$(SWIX): $(EOSRPM) manifest.txt
 	zip -9 $@ $^
-	rm -f $(PAM_EOS_RPM)
 
 manifest.txt:
 	set -e; { \
           echo 'format: 1'; \
           echo 'primaryRpm: $(EOSRPM)'; \
           echo -n '$(EOSRPM)-sha1: '; \
-          set `$(SHA1SUM) "$(EOSRPM)"`; \
-          echo $$1; \
-          echo -n '$(PAM_EOS_RPM)-sha1: '; \
-          set `$(SHA1SUM) $(PAM_EOS_RPM)`; \
+          set `sha1sum "$(EOSRPM)"`; \
           echo $$1; \
         } >$@-t
 	mv $@-t $@
