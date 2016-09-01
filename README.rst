@@ -74,7 +74,7 @@ scripts.
 
 ::
 
-    Arista#bash cat /persist/sys/bfd\_int\_sync.ini
+    Arista#bash cat /persist/sys/bfd_int_sync.ini
 
     ###############################################################################
     # [General]
@@ -184,17 +184,12 @@ On-switch EOS config to ensure scripts start automatically on reload:
 
 ::
 
-    Arista(config)#event-handler hbm
-    Arista(config-event-handler-hbm)#action bash /usr/bin/hbm.py
-    Arista(config-event-handler-hbm)#delay 300
-    Arista(config-event-handler-hbm)#trigger on-boot
-    Arista(config-event-handler-hbm)#exit
-
-    Arista(config)#event-handler bfd_sync
-    Arista(config-event-handler-bfd_sync)#action bash /usr/bin/bfd_int_sync.py
-    Arista(config-event-handler-bfd_sync)#delay 300
-    Arista(config-event-handler-bfd_sync)#trigger on-boot
-    Arista(config-event-handler-bfd_sync)#end
+    Arista(config)#
+    event-handler intelligent-bypass
+       action bash /usr/bin/hbm_service start
+       delay 300
+       trigger on-boot
+       exit
 
 Operation
 ---------
@@ -206,7 +201,6 @@ services:
 
     Arista(config)#
     alias hbm_status    bash /usr/bin/hbm_service status
-    alias ips_mon       bash /usr/bin/hbm_service
     alias start_all     bash /usr/bin/hbm_service start
     alias start_bfdsync bash /usr/bin/hbm_service start_bfdsync
     alias start_hbm     bash /usr/bin/hbm_service start_hbm
