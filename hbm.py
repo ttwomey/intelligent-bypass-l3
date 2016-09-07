@@ -160,7 +160,9 @@
 
 import argparse
 import ConfigParser
+import json
 from jsonrpclib import Server
+import jsonrpclib
 import os
 from pprint import pformat
 import re
@@ -459,7 +461,12 @@ def run_cmds(eapi, cmds):
     if DEBUG:
         print "Executing commands: {}".format(pformat(cmds))
 
-    eapi.runCmds(1, cmds)
+    try:
+        eapi.runCmds(1, cmds)
+    except jsonrpclib.jsonrpc.ProtocolError as err:
+        log("Command Error: {}. Attempted commands: {}.".format(
+            err[0][1], json.loads(jsonrpclib.history.request)['params'][1]),
+            error=True)
 
 
 def intfStatus(eapi, intf):
