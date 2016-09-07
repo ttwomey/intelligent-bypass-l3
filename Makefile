@@ -10,7 +10,6 @@
 #	make pep8 -- pep8 checks
 #	make pyflakes -- pyflakes checks
 #	make flake8 -- flake8 checks
-#	make check -- manifest checks
 #	make tests -- run all of the tests
 #	make unittest -- runs the unit tests
 #	make systest -- runs the system tests
@@ -38,7 +37,7 @@ SWIX := $(BASENAME).swix
 
 ########################################################
 
-all: clean check pep8 pyflakes tests
+all: clean pep8 pyflakes tests swix
 
 pep8:
 	-pep8 -r --ignore=E501,E221,W291,W391,E302,E251,E203,W293,E231,E303,E201,E225,E261,E241 . test/
@@ -49,9 +48,6 @@ pyflakes:
 flake8:
 	flake8 --ignore=E302,E303,W391 --exit-zero .
 	flake8 --ignore=E302,E303,W391,N802 --max-line-length=100 test/
-
-check:
-	check-manifest
 
 clean:
 	@echo "Cleaning up build/dist/rpmbuild..."
@@ -65,18 +61,13 @@ clean:
 sdist: clean
 	$(PYTHON) setup.py sdist
 
-tests: unittest systest
+tests: unittest
 
 unittest: clean
 	$(COVERAGE) run --include '*.py' -m unittest  discover test/unit -v
 
-systest: clean
-	$(COVERAGE) run -m unittest discover test/system -v
-
 coverage_report:
 	$(COVERAGE) report -m --include='hbm.py,bfd_int_sync.py'
-
-all: clean swix
 
 rpm: $(EOSRPM)
 
