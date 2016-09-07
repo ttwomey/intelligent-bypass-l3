@@ -71,52 +71,6 @@ Arista(config-event-handler-hbm)
 %clean
 rm -rf %{buildroot}
 
-%post
-# 1 - Perform tasks related to initial install
-# 2 - Perform tasks related to upgrade (existing to new one)
-if [ $1 -eq 1 ]; then
-    #if [ -d "%{sysdbprofile_root}" ]; then
-    #    %{__cp} %{igmpsrv_root}/SysdbProfiles/IgmpSnoopingSrv %{sysdbprofile_root}/IgmpSnoopingSrv
-    #fi
-fi
-exit 0
-
-# When the Cli package is available, install the daemon config command
-%triggerin -- intelligent-bypass-l3
-FastCli -p 15 -c "configure
-daemon %{name}
-exec /usr/bin/uwsgi --ini=/etc/uwsgi/igmpsnoopingsrv_wsgi.ini
-heartbeat 60
-no shutdown
-end"
-exit 0
-
-%triggerun -- intelligent-bypass-l3
-# $1 stores the number of versions of this RPM that will be installed after
-#   this uninstall completes.
-# $2 stores the number of versions of the target RPM that will be installed
-#   after this uninstall completes.
-if [ $1 -eq 0 -a $2 -gt 0 ] ; then
-    FastCli -p 15 -c "configure
-    daemon %{name}
-    shutdown
-    no daemon %{name}
-    end"
-    service nginx restart
-fi
-exit 0
-
-%preun
-# 0 - Perform tasks related to uninstallation
-# 1 - Perform tasks related to upgrade
-if [ $1 -eq 0 ]; then
-    #if [ -f "%{sysdbprofile_root}/IgmpSnoopingSrv" ]; then
-    #    %{__rm} %{sysdbprofile_root}/IgmpSnoopingSrv
-    #fi
-fi
-exit 0
-
-
 %files
 %defattr(-,root,eosadmin,-)
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/bfd_int_sync.ini

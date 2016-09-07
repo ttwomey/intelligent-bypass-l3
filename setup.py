@@ -10,7 +10,8 @@ config = {
     'author': 'Arista EOS+ Consulting Services',
     'author_email': 'eosplus-dev@arista.com',
     'url': '://github.com/arista-eosplus/Intelligent-Bypass-L3',
-    'download_url': 'https://github.com/arista-eosplus/Intelligent-Bypass-L3/releases',
+    'download_url':
+    'https://github.com/arista-eosplus/Intelligent-Bypass-L3/releases',
     'license': open('LICENSE').read().strip(),
     'version': open('VERSION').read().strip(),
     'scripts': ['hbm_service', 'hbm.py', 'bfd_int_sync.py'],

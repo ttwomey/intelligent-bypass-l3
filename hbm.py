@@ -160,7 +160,9 @@
 
 import argparse
 import ConfigParser
+import json
 from jsonrpclib import Server
+import jsonrpclib
 import os
 from pprint import pformat
 import re
@@ -378,12 +380,15 @@ def parse_config(filename):
     CONFIG['eapi']['port'] = config.get('eapi', 'port')
     CONFIG['eapi']['username'] = config.get('eapi', 'username')
     CONFIG['eapi']['password'] = config.get('eapi', 'password')
-    CONFIG['eapi']['ok_config'] = conf_string_to_list(config.get('eapi',
-                                                                 'ok_config'))
-    CONFIG['eapi']['fail_config'] = conf_string_to_list(config.get('eapi',
-                                                                   'fail_config'))
-    CONFIG['eapi']['shutdown_config'] = conf_string_to_list(config.get('eapi',
-                                                                       'shutdown_config'))
+    CONFIG['eapi']['ok_config'] = \
+        conf_string_to_list(config.get('eapi',
+                                       'ok_config'))
+    CONFIG['eapi']['fail_config'] = \
+        conf_string_to_list(config.get('eapi',
+                                       'fail_config'))
+    CONFIG['eapi']['shutdown_config'] = \
+        conf_string_to_list(config.get('eapi',
+                                       'shutdown_config'))
     CONFIG['eapi']['url'] = config.get('eapi', 'url')
 
     if 'peer_eapi' in config.sections():
@@ -393,12 +398,15 @@ def parse_config(filename):
         CONFIG['peer']['port'] = config.get('peer_eapi', 'port')
         CONFIG['peer']['username'] = config.get('peer_eapi', 'username')
         CONFIG['peer']['password'] = config.get('peer_eapi', 'password')
-        CONFIG['peer']['ok_config'] = conf_string_to_list(config.get('peer_eapi',
-                                                                     'ok_config'))
-        CONFIG['peer']['fail_config'] = conf_string_to_list(config.get('peer_eapi',
-                                                                       'fail_config'))
-        CONFIG['peer']['shutdown_config'] = conf_string_to_list(config.get('peer_eapi',
-                                                                           'shutdown_config'))
+        CONFIG['peer']['ok_config'] = \
+            conf_string_to_list(config.get('peer_eapi',
+                                           'ok_config'))
+        CONFIG['peer']['fail_config'] = \
+            conf_string_to_list(config.get('peer_eapi',
+                                           'fail_config'))
+        CONFIG['peer']['shutdown_config'] = \
+            conf_string_to_list(config.get('peer_eapi',
+                                           'shutdown_config'))
         CONFIG['peer']['url'] = config.get('peer_eapi', 'url')
 
     CONFIG['interval'] = config.getint('General', 'interval')
@@ -453,7 +461,12 @@ def run_cmds(eapi, cmds):
     if DEBUG:
         print "Executing commands: {}".format(pformat(cmds))
 
-    eapi.runCmds(1, cmds)
+    try:
+        eapi.runCmds(1, cmds)
+    except jsonrpclib.jsonrpc.ProtocolError as err:
+        log("Command Error: {}. Attempted commands: {}.".format(
+            err[0][1], json.loads(jsonrpclib.history.request)['params'][1]),
+            error=True)
 
 
 def intfStatus(eapi, intf):
@@ -798,16 +811,19 @@ def get_peer_addr(CONFIG, interface):
 
     output = CONFIG['eapi']['switch'].runCmds(1, ['show ip interface %s' %
                                                   interface])[0]
-    mask_len = output['interfaces'][interface]['interfaceAddress']['primaryIp']['maskLen']
+    mask_len = \
+        output['interfaces'][interface]['interfaceAddress']['primaryIp']['maskLen']  # noqa
     if mask_len != 30:
         log("Interface {}/{} is not using a /30 network".format(interface,
                                                                 mask_len))
 
-    local_addr = output['interfaces'][interface]['interfaceAddress']['primaryIp']['address']
+    local_addr = \
+        output['interfaces'][interface]['interfaceAddress']['primaryIp']['address']  # noqa
 
     output = subprocess.check_output(['ipcalc', '-bn', str(local_addr) + '/' +
                                       str(mask_len)])
-    regex = re.compile(r'^BROADCAST=(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}).*NETWORK=(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})', re.DOTALL)
+    match_expr = r'^BROADCAST=(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}).*NETWORK=(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})'  # noqa
+    regex = re.compile(match_expr, re.DOTALL)
     match_obj = regex.match(output)
     (bcast, network) = match_obj.groups()
     boct = int(bcast.split('.')[3])
@@ -854,9 +870,11 @@ def main():
 
     # Determine peer addresses if not pre-configured
     if not CONFIG.get('probe_dst_address1'):
-        CONFIG['probe_dst_address1'] = get_peer_addr(CONFIG, CONFIG['interface1'])
+        CONFIG['probe_dst_address1'] = get_peer_addr(CONFIG,
+                                                     CONFIG['interface1'])
     if not CONFIG.get('probe_dst_address2'):
-        CONFIG['probe_dst_address2'] = get_peer_addr(CONFIG, CONFIG['interface2'])
+        CONFIG['probe_dst_address2'] = get_peer_addr(CONFIG,
+                                                     CONFIG['interface2'])
 
     # setup to monitor both the A-side and B-side paths..
     devices = []
